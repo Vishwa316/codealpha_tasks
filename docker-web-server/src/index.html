@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevOps Dashboard - Containerization Hub</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Background glowing blobs -->
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+
+    <header class="header">
+        <div class="container nav-container">
+            <div class="logo">
+                <i class="fa-brands fa-docker logo-icon"></i>
+                <span class="logo-text">Docker<span class="text-accent">Hub</span></span>
+            </div>
+            <nav class="nav-links">
+                <a href="#dashboard"><i class="fa-solid fa-gauge-high"></i> Dashboard</a>
+                <a href="#cheatsheet"><i class="fa-solid fa-terminal"></i> Cheatsheet</a>
+                <a href="#lifecycle"><i class="fa-solid fa-arrows-spin"></i> Lifecycle</a>
+            </nav>
+            <div class="header-status">
+                <span class="status-indicator-dot online"></span>
+                <span class="status-label">Web Server: Running</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Hero Section -->
+        <section class="hero-section">
+            <h1 class="hero-title">Interactive Docker & Containerization Hub</h1>
+            <p class="hero-subtitle">Learn container lifecycle, monitor metrics, and explore DevOps deployment best practices in a beautiful, real-time simulated sandbox environment.</p>
+        </section>
+
+        <!-- Interactive Sandbox / Dashboard -->
+        <section id="dashboard" class="section">
+            <div class="section-header">
+                <h2><i class="fa-solid fa-gauge-high text-accent"></i> Container Control Center</h2>
+                <p>Simulate Docker CLI operations and monitor container resource usage dynamically.</p>
+            </div>
+
+            <div class="grid-layout">
+                <!-- Simulation Controls & Info -->
+                <div class="card glass-card span-8">
+                    <div class="card-header">
+                        <h3><i class="fa-solid fa-gears"></i> Virtual Container Sandbox</h3>
+                        <span class="badge" id="container-status-badge">status: dead</span>
+                    </div>
+
+                    <div class="sandbox-controls">
+                        <button class="btn btn-primary" id="btn-build">
+                            <i class="fa-solid fa-hammer"></i> docker build
+                        </button>
+                        <button class="btn btn-success" id="btn-run" disabled>
+                            <i class="fa-solid fa-play"></i> docker run
+                        </button>
+                        <button class="btn btn-warning" id="btn-pause" disabled>
+                            <i class="fa-solid fa-pause"></i> docker pause
+                        </button>
+                        <button class="btn btn-danger" id="btn-stop" disabled>
+                            <i class="fa-solid fa-stop"></i> docker stop
+                        </button>
+                        <button class="btn btn-info" id="btn-health" disabled>
+                            <i class="fa-solid fa-heart-pulse"></i> healthcheck
+                        </button>
+                    </div>
+
+                    <!-- Metrics Indicators -->
+                    <div class="metrics-grid">
+                        <div class="metric-card">
+                            <div class="metric-value" id="metric-cpu">0%</div>
+                            <div class="metric-label"><i class="fa-solid fa-microchip"></i> CPU Usage</div>
+                            <div class="metric-progress-container">
+                                <div class="metric-progress" id="cpu-progress" style="width: 0%"></div>
+                            </div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value" id="metric-mem">0 MB</div>
+                            <div class="metric-label"><i class="fa-solid fa-memory"></i> RAM Usage</div>
+                            <div class="metric-progress-container">
+                                <div class="metric-progress" id="mem-progress" style="width: 0%"></div>
+                            </div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value" id="metric-health">N/A</div>
+                            <div class="metric-label"><i class="fa-solid fa-heart-circle-bolt"></i> Container Health</div>
+                            <div class="metric-progress-container">
+                                <div class="metric-progress" id="health-progress" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Simulation Terminal Log -->
+                <div class="card glass-card span-4 terminal-card">
+                    <div class="card-header">
+                        <h3><i class="fa-solid fa-terminal text-accent"></i> Terminal Output</h3>
+                        <button class="btn-clear" id="btn-clear-logs"><i class="fa-solid fa-trash-can"></i> Clear</button>
+                    </div>
+                    <div class="terminal-body" id="terminal-logs">
+                        <div class="terminal-line text-muted">// Waiting for container build...</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Command Cheatsheet Section -->
+        <section id="cheatsheet" class="section">
+            <div class="section-header">
+                <h2><i class="fa-solid fa-terminal text-accent"></i> Docker CLI Cheatsheet</h2>
+                <p>Essential docker commands you need for container lifecycle management and troubleshooting.</p>
+            </div>
+
+            <!-- Categories Tabs -->
+            <div class="tabs-container">
+                <button class="tab-btn active" onclick="switchTab('all')">All Commands</button>
+                <button class="tab-btn" onclick="switchTab('lifecycle')">Lifecycle</button>
+                <button class="tab-btn" onclick="switchTab('management')">Management</button>
+                <button class="tab-btn" onclick="switchTab('trouble')">Troubleshoot & Logs</button>
+            </div>
+
+            <div class="cheatsheet-grid" id="cheatsheet-container">
+                <!-- Cards will be injected by JavaScript -->
+            </div>
+        </section>
+
+        <!-- Container Lifecycle / Best Practices Guide -->
+        <section id="lifecycle" class="section">
+            <div class="section-header">
+                <h2><i class="fa-solid fa-arrows-spin text-accent"></i> Container Lifecycle & DevOps Best Practices</h2>
+                <p>Learn how Docker coordinates environments and how to deploy systems cleanly.</p>
+            </div>
+
+            <div class="grid-layout">
+                <!-- Lifecycle Explanation -->
+                <div class="card glass-card span-6">
+                    <h3>Container Lifecycle Explained</h3>
+                    <div class="lifecycle-steps">
+                        <div class="step-item">
+                            <div class="step-num">1</div>
+                            <div class="step-content">
+                                <h4>Created State</h4>
+                                <p>Created using <code>docker create</code>. Filesystem structure is established, but the process does not execute yet.</p>
+                            </div>
+                        </div>
+                        <div class="step-item">
+                            <div class="step-num">2</div>
+                            <div class="step-content">
+                                <h4>Running State</h4>
+                                <p>Launched using <code>docker start</code> or <code>docker run</code>. The main process (PID 1) executes, and ports/volumes are actively bound.</p>
+                            </div>
+                        </div>
+                        <div class="step-item">
+                            <div class="step-num">3</div>
+                            <div class="step-content">
+                                <h4>Paused State</h4>
+                                <p>Suspended using <code>docker pause</code>. All processes in the container are frozen (using the cgroups freezer) until resumed.</p>
+                            </div>
+                        </div>
+                        <div class="step-item">
+                            <div class="step-num">4</div>
+                            <div class="step-content">
+                                <h4>Stopped State</h4>
+                                <p>Terminated using <code>docker stop</code> (SIGTERM, followed by SIGKILL if unresponsive). The container process exits, but state files remain.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Best Practices Card -->
+                <div class="card glass-card span-6">
+                    <h3>Docker Deployment Best Practices</h3>
+                    <ul class="practices-list">
+                        <li>
+                            <i class="fa-solid fa-shield-halved text-success"></i>
+                            <div>
+                                <strong>Use Multi-Stage Builds</strong>
+                                <p>Keeps final images lightweight by separating build environments (e.g. compilers, source files) from production runtime.</p>
+                            </div>
+                        </li>
+                        <li>
+                            <i class="fa-solid fa-user-shield text-success"></i>
+                            <div>
+                                <strong>Run as Non-Root User</strong>
+                                <p>By default, Docker processes run as root inside the container. Explicitly define a non-root user for security isolation.</p>
+                            </div>
+                        </li>
+                        <li>
+                            <i class="fa-solid fa-file-shield text-success"></i>
+                            <div>
+                                <strong>Keep Images Slim (Alpine Nginx)</strong>
+                                <p>Use minimal base images (like Alpine Linux) to drastically reduce the security attack surface and build size.</p>
+                            </div>
+                        </li>
+                        <li>
+                            <i class="fa-solid fa-heart-pulse text-success"></i>
+                            <div>
+                                <strong>Define Healthchecks</strong>
+                                <p>Configure Nginx health checks in Docker so orchestration tools (like Kubernetes or Docker Compose) know when a container is unhealthy.</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container footer-content">
+            <p>&copy; 2026 Code Alpha Internship Task. All Rights Reserved.</p>
+            <div class="socials">
+                <a href="#" class="social-icon"><i class="fa-brands fa-github"></i> View Repo</a>
+                <a href="#" class="social-icon"><i class="fa-solid fa-circle-nodes"></i> DevOps Portfolio</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,58 @@
+# ============================================================
+# docker-compose.yml - Docker Web Server
+# Code Alpha Internship Task
+# ============================================================
+version: '3.9'
+
+services:
+  webserver:
+    # Build the image from the Dockerfile in the current directory
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    # Name the container for easy reference
+    container_name: devops-webserver
+
+    # Map host port 8080 to container port 80
+    ports:
+      - "8080:80"
+
+    # Always restart the container unless manually stopped
+    restart: unless-stopped
+
+    # Environment variables (can be used by Nginx or future app logic)
+    environment:
+      - NGINX_HOST=localhost
+      - NGINX_PORT=80
+
+    # Health check for Docker Compose to monitor the service
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+    # Logging configuration for container monitoring
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+    # Resource limits for predictable container performance
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 128M
+        reservations:
+          cpus: '0.10'
+          memory: 32M
+
+    # Labels for container metadata and monitoring tools
+    labels:
+      - "project=code-alpha-internship"
+      - "task=web-server-docker"
+      - "managed-by=docker-compose"

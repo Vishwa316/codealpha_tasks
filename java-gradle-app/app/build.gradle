@@ -1,0 +1,92 @@
+/*
+ * ============================================================
+ * build.gradle — DevOps Task Planner
+ * Code Alpha Internship Task: Java Application using Gradle
+ * ============================================================
+ *
+ * This build file automates the complete Java project lifecycle:
+ *   - Compilation:   Compiles all Java source files
+ *   - Testing:       Runs JUnit 5 tests via useJUnitPlatform()
+ *   - Packaging:     Bundles app into a runnable JAR
+ *   - Distribution:  Creates zip/tar archives via 'distZip'
+ *
+ * Key Gradle Concepts Demonstrated:
+ *   - plugins {}     : Adds capabilities (application runner, test support)
+ *   - repositories{} : Where Gradle downloads dependencies from
+ *   - dependencies{} : External libraries this project needs
+ *   - java {}        : JVM toolchain version pinning
+ *   - application {} : Specifies entry point (main class)
+ *   - tasks.named {} : Configures existing lifecycle tasks
+ * ============================================================
+ */
+
+plugins {
+    // The 'application' plugin adds the 'run', 'jar', 'distZip', 'distTar' tasks
+    // It enables building self-contained, executable Java CLI applications
+    id 'application'
+}
+
+repositories {
+    // Maven Central is the default public artifact repository for Java
+    // Gradle downloads dependencies (JARs) from here automatically
+    mavenCentral()
+}
+
+dependencies {
+    // ---- Test Dependencies ----
+    // JUnit Jupiter (JUnit 5) — modern Java unit testing framework
+    // Supports annotations: @Test, @BeforeEach, @AfterEach, @ParameterizedTest
+    testImplementation libs.junit.jupiter
+
+    // JUnit Platform Launcher — required to run JUnit 5 tests with Gradle
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+    // ---- Runtime Dependencies ----
+    // Google Guava — utility library for collections, strings, and I/O helpers
+    implementation libs.guava
+}
+
+// ---- Java Toolchain Configuration ----
+// Pins the Java version so builds are reproducible across any developer machine
+// or CI/CD environment (GitHub Actions, Jenkins, Azure Pipelines)
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+// ---- Application Entry Point ----
+// Gradle needs to know which class has the public static void main(String[] args)
+application {
+    mainClass = 'com.devops.App'
+}
+
+// ---- Test Task Configuration ----
+// Tell Gradle to use the JUnit Platform engine to discover and run tests
+tasks.named('test') {
+    useJUnitPlatform()
+
+    // Print a summary of test results to the console after every run
+    testLogging {
+        events 'passed', 'skipped', 'failed'
+        showExceptions = true
+        exceptionFormat = 'full'
+    }
+}
+
+// ---- Custom Task: Print project info ----
+// Run with: ./gradlew projectInfo
+tasks.register('projectInfo') {
+    group = 'DevOps'
+    description = 'Displays project metadata and build environment information'
+    doLast {
+        println "======================================"
+        println " Project: ${project.name}"
+        println " Version: ${project.version}"
+        println " Java:    ${JavaVersion.current()}"
+        println " Gradle:  ${gradle.gradleVersion}"
+        println " Group:   ${project.group}"
+        println "======================================"
+    }
+}
+

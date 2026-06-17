@@ -1,0 +1,89 @@
+# ============================================================
+# GitHub Actions Workflow: Gradle Build & Test
+# Code Alpha Internship — Java Application using Gradle
+# ============================================================
+#
+# This workflow automatically builds and tests the Java app
+# on every push or pull request to the main branch.
+# It demonstrates CI/CD integration with Gradle builds.
+# ============================================================
+
+name: "Java CI with Gradle"
+
+# Trigger: Run on any push or pull request targeting 'main'
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+# Cancel any in-progress run for the same branch (saves CI minutes)
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-test:
+    name: "Build & Test (Java ${{ matrix.java-version }})"
+    runs-on: ubuntu-latest
+
+    # Matrix strategy: test on multiple Java versions for compatibility
+    strategy:
+      matrix:
+        java-version: ['17', '21']
+
+    steps:
+      # Step 1: Checkout the repository source code
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      # Step 2: Set up the specified JDK version from the matrix
+      - name: Set up JDK ${{ matrix.java-version }}
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ matrix.java-version }}
+          distribution: 'temurin'  # Eclipse Temurin (formerly AdoptOpenJDK)
+
+      # Step 3: Cache Gradle dependencies to speed up subsequent builds
+      - name: Cache Gradle packages
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      # Step 4: Make the Gradle wrapper script executable (Linux requirement)
+      - name: Grant execute permission for Gradle wrapper
+        run: chmod +x java-gradle-app/gradlew
+
+      # Step 5: Run Gradle build — compiles all source code
+      - name: Build with Gradle
+        working-directory: java-gradle-app
+        run: ./gradlew build --no-daemon
+
+      # Step 6: Run all JUnit 5 unit tests
+      - name: Run unit tests
+        working-directory: java-gradle-app
+        run: ./gradlew test --no-daemon
+
+      # Step 7: Run the application to show its output
+      - name: Run application
+        working-directory: java-gradle-app
+        run: ./gradlew run --no-daemon
+
+      # Step 8: Print project info using our custom Gradle task
+      - name: Print project info
+        working-directory: java-gradle-app
+        run: ./gradlew projectInfo --no-daemon
+
+      # Step 9: Upload test reports as downloadable artifacts for review
+      - name: Upload test reports
+        uses: actions/upload-artifact@v4
+        if: always()  # Upload even if tests fail, so we can debug
+        with:
+          name: test-report-java-${{ matrix.java-version }}
+          path: java-gradle-app/app/build/reports/tests/test/
+          retention-days: 14
