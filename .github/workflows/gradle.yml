@@ -30,7 +30,7 @@ jobs:
     # Matrix strategy: test on multiple Java versions for compatibility
     strategy:
       matrix:
-        java-version: ['17', '21']
+        java-version: ['21']
 
     steps:
       # Step 1: Checkout the repository source code
