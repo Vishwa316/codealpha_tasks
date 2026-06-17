@@ -51,7 +51,7 @@ jobs:
       # Step 4: Run Gradle build, tests, and application tasks
       - name: Execute Gradle build
         working-directory: java-gradle-app
-        run: ./gradlew build test run projectInfo --no-daemon
+        run: ./gradlew build test run projectInfo --no-daemon --no-configuration-cache
 
       # Step 9: Upload test reports as downloadable artifacts for review
       - name: Upload test reports
