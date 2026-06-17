@@ -57,7 +57,9 @@ jobs:
 
       # Step 4: Make the Gradle wrapper script executable (Linux requirement)
       - name: Grant execute permission for Gradle wrapper
-        run: chmod +x java-gradle-app/gradlew
+        run: |
+          sed -i 's/\r$//' java-gradle-app/gradlew
+          chmod +x java-gradle-app/gradlew
 
       # Step 5: Run Gradle build — compiles all source code
       - name: Build with Gradle
