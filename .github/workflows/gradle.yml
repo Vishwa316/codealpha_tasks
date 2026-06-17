@@ -44,42 +44,14 @@ jobs:
           java-version: ${{ matrix.java-version }}
           distribution: 'temurin'  # Eclipse Temurin (formerly AdoptOpenJDK)
 
-      # Step 3: Cache Gradle dependencies to speed up subsequent builds
-      - name: Cache Gradle packages
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
+      # Step 3: Setup Gradle (automatically handles caching, wrapper permissions, and execution)
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
 
-      # Step 4: Make the Gradle wrapper script executable (Linux requirement)
-      - name: Grant execute permission for Gradle wrapper
-        run: |
-          sed -i 's/\r$//' java-gradle-app/gradlew
-          chmod +x java-gradle-app/gradlew
-
-      # Step 5: Run Gradle build — compiles all source code
-      - name: Build with Gradle
+      # Step 4: Run Gradle build, tests, and application tasks
+      - name: Execute Gradle build
         working-directory: java-gradle-app
-        run: ./gradlew build --no-daemon
-
-      # Step 6: Run all JUnit 5 unit tests
-      - name: Run unit tests
-        working-directory: java-gradle-app
-        run: ./gradlew test --no-daemon
-
-      # Step 7: Run the application to show its output
-      - name: Run application
-        working-directory: java-gradle-app
-        run: ./gradlew run --no-daemon
-
-      # Step 8: Print project info using our custom Gradle task
-      - name: Print project info
-        working-directory: java-gradle-app
-        run: ./gradlew projectInfo --no-daemon
+        run: ./gradlew build test run projectInfo --no-daemon
 
       # Step 9: Upload test reports as downloadable artifacts for review
       - name: Upload test reports
